@@ -4,6 +4,8 @@ import { Stack } from "expo-router";
 import "../../global.css";
 import * as Sentry from '@sentry/react-native';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AppProvider } from "@/contexts/AppProvider";
+import ChatWrapper from "@/components/ChatWrapper";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -36,10 +38,14 @@ export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <GestureHandlerRootView className="flex-1">
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
-        </Stack>
+        <ChatWrapper>
+          <AppProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(tabs)" />
+            </Stack>
+          </AppProvider>
+        </ChatWrapper>
       </GestureHandlerRootView>
     </ClerkProvider>
   );
