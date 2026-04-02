@@ -7,13 +7,14 @@ import {
     IncomingCall,
     OutgoingCall,
     StreamCall,
+    StreamVideoRN,
     useCall,
     useCallStateHooks,
     useStreamVideoClient,
 } from "@stream-io/video-react-native-sdk";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Platform, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useChatContext } from "stream-chat-expo";
 
@@ -30,7 +31,17 @@ const CallScreen = () => {
 
         const startCall = async () => {
             try {
-                // find channel by ID to find its members
+                if (Platform.OS === "android") {
+                    const hasCameraHardware = await StreamVideoRN.androidHasCameraHardware();
+                    const hasAudioOutputHardware = await StreamVideoRN.androidHasAudioOutputHardware();
+                    const hasMicrophoneHardware = await StreamVideoRN.androidHasMicrophoneHardware();
+
+                    if (!hasCameraHardware || !hasMicrophoneHardware || !hasAudioOutputHardware) {
+                        setError("Your device doesn't have the necessary hardware to make calls.");
+                        return;
+                    }
+                }
+
                 const channel = chatClient.channel("messaging", callId);
                 await channel.watch();
 
@@ -92,7 +103,6 @@ function CallUI() {
         if (callingState === CallingState.LEFT) router.back();
     }, [callingState, router, call]);
 
-    // show ringing UI for RINGING, JOINING, and IDLE states
     if ([CallingState.RINGING, CallingState.JOINING, CallingState.IDLE].includes(callingState)) {
         return (
             <SafeAreaView className="flex-1 bg-background">

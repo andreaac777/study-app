@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/react-native';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AppProvider } from "@/contexts/AppProvider";
 import ChatWrapper from "@/components/ChatWrapper";
+import VideoProvider from "@/components/VideoProvider";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -39,12 +40,14 @@ export default function RootLayout() {
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <GestureHandlerRootView className="flex-1">
         <ChatWrapper>
-          <AppProvider>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="(auth)" />
-              <Stack.Screen name="(tabs)" />
-            </Stack>
-          </AppProvider>
+          <VideoProvider>
+            <AppProvider>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(tabs)" />
+              </Stack>
+            </AppProvider>
+          </VideoProvider>
         </ChatWrapper>
       </GestureHandlerRootView>
     </ClerkProvider>
