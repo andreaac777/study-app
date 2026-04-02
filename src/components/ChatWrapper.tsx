@@ -29,7 +29,6 @@ const ChatClient = ({ children, user }: { children: React.ReactNode; user: User 
     const syncedRef = useRef(false);
 
     useEffect(() => {
-        // this if statements is needed so that we don't run this method multiple times. only once!
         if (!syncedRef.current) {
             syncedRef.current = true;
             syncUserToStream(user);
@@ -80,11 +79,8 @@ const ChatWrapper = ({ children }: { children: React.ReactNode }) => {
 
     if (!isLoaded) return <FullScreenLoader message="Loading chat..." />;
 
-    // not signed in — render children directly (auth screens)
     if (!user) return <>{children}</>;
 
     return <ChatClient user={user}>{children}</ChatClient>;
 };
 export default ChatWrapper;
-
-// TODO: ADD sentry logs link in the video
